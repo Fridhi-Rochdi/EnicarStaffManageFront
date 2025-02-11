@@ -7,7 +7,7 @@ function Landing() {
     <div className="container grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols--4 gap-4">
       {fakeData?.map(
         (
-          { id, title, name, description, actProf, totalNumber, createdDate },
+          { id, title, name, description, actProf, totalNumber, createdDate,status },
           index
         ) => (
           <PrintCard
@@ -19,6 +19,7 @@ function Landing() {
             actProf={actProf}
             totalNumber={totalNumber}
             createdDate={createdDate}
+            status={status}
           />
         )
       )}

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import Select from "react-select";
+import useTypeOptions from "../store/utils";
 
 export default function AddTicketPage() {
   const [title, setTitle] = useState("");
+  const [fileType, setFileType] = useState("");
+  const [totalNumber, setTotalNumber] = useState(0);
   const [description, setDescription] = useState("");
+  const { typeOptions } = useTypeOptions();
 
   const handleSubmit = () => {};
 
@@ -37,21 +42,75 @@ export default function AddTicketPage() {
 
             <div>
               <label
-                htmlFor="description"
+                htmlFor="file"
                 className="block text-sm font-medium text-gray-700"
               >
-                Description :
+                File :
               </label>
-              <textarea
+              <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="file"
+                type="file"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="fileType"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Type :
+              </label>
+              <Select
+                className="shadow appearance-none border rounded w-full  text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 rows={5}
-                id="description"
+                id="fileType"
                 type="text"
-                defaultValue={description}
+                defaultValue={fileType}
                 onChange={(e) => {
-                  setDescription(e.target.value);
+                  setFileType(e.target.value);
+                }}
+                options={typeOptions}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="totalNumber"
+                className="block text-sm font-medium text-gray-700"
+              >
+                nombre de copies :
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-40 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                rows={5}
+                id="totalNumber"
+                type="number"
+                min={0}
+                max={200}
+                defaultValue={totalNumber}
+                onChange={(e) => {
+                  setTotalNumber(e.target.value);
                 }}
               />
+            </div>
+
+            <div>
+              <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+              >
+              Note :
+              </label>
+              <textarea
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700
+              leading-tight focus:outline-none focus:shadow-outline"
+              id="description"
+              type="text"
+              defaultValue={description}
+              onChange={(e) => setDescription(e.target.value)}
+              />
+              
             </div>
           </div>
 

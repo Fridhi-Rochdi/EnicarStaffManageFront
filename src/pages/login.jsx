@@ -1,13 +1,25 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { HOME } from "../routes";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { HOME, LANDING } from "../routes";
+import { authAPI } from "../api/api";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleLogin = (event) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate(HOME);
+    }
+  }, [user, navigate]);
+
+  const handleLogin = async (event) => {
     event.preventDefault();
     
     if (!email || !password) {
@@ -15,7 +27,23 @@ function Login() {
       return;
     }
 
-    setErrorMessage(""); 
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      const result = await authAPI.login(email, password);
+      
+      if (result.success) {
+        navigate(HOME);
+      } else {
+        setErrorMessage(result.message || "Erreur de connexion");
+      }
+    } catch (error) {
+      setErrorMessage("Erreur de connexion. Veuillez réessayer.");
+      console.error("Login error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,17 +93,21 @@ function Login() {
           {errorMessage && <p className="text-red-500 text-sm mt-4">{errorMessage}</p>}
 
           <div className="mt-12 flex text-center justify-center">
-            <Link
-              to={email && password ? HOME : "#"}
-              onClick={(e) => {
-                if (!email || !password) {
-                  e.preventDefault(); 
-                  setErrorMessage("Veuillez remplir tous les champs.");
-                }
-              }}
-              className="w-full py-3 px-4 text-md tracking-widest font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-800 focus:outline-none"
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 px-4 text-md tracking-widest font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-800 focus:outline-none disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? "Connexion..." : "Login"}
+            </button>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link 
+              to={LANDING}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              ← Retour à l'accueil
             </Link>
           </div>
         </form>

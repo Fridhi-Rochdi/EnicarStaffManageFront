@@ -1,12 +1,12 @@
 import { create } from "zustand";
 const useTypeOptions = create(() => ({
   typeOptions: [
-    { value: "cour", label: "cour" },
-    { value: "Traveaux Dérigés", label: "Traveaux Dérigés" },
-    { value: "Traveaux Pratiques", label: "Traveaux Pratiques" },
-    { value: "Cour Integré", label: "Cour Integré" },
-    { value: "Examen", label: "Examen" },
-    { value: "Examen Intelligent", label: "Examen Intelligent" },
+    { value: "COURS", label: "Cours" },
+    { value: "TRAVEAUX_DIRIGES", label: "Traveaux Dérigés" },
+    { value: "TRAVEAUX_PRATIQUES", label: "Traveaux Pratiques" },
+    { value: "COURS_INTEGRE", label: "Cour Integré" },
+    { value: "EXAMEN", label: "Examen" },
+    { value: "EXAMEN_INTELLIGENT", label: "Examen Intelligent" },
   ],
 }));
 

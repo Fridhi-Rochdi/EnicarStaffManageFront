@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎫 Enicar Staff Management System
 
 Application web moderne de gestion du personnel pour Enicar, développée avec React et Vite.
@@ -180,3 +181,6 @@ Ce projet est destiné à un usage privé pour Enicar.
 ---
 
 ⭐ Si vous aimez ce projet, n'hésitez pas à lui donner une étoile sur GitHub !
+=======
+# EnicarStaffManageFront
+>>>>>>> e0d934bf2bbca9ebb84b9e9a83044e38ad0fe713

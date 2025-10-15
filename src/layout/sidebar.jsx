@@ -1,26 +1,57 @@
-import { HomeIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/16/solid";
+import { HomeIcon, PlusCircleIcon, XMarkIcon, CalendarIcon, BuildingOfficeIcon, UserGroupIcon, ChartBarIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
-import { ADDTICKET, HOME, LOGIN } from "../routes";
+import { ADDTICKET, HOME, LOGIN, EXAM_PERIODS, ROOM_RESERVATIONS, USER_MANAGEMENT, DASHBOARD, TICKET } from "../routes";
+import { authAPI } from "../api/api";
 
 export default function SideBar({ openaside, setOpenaside }) {
   const location = useLocation();
+  const user = authAPI.getCurrentUser();
 
   const navigation = [
     {
-      isSupperCollab: false,
-      icon: <HomeIcon className="size-6" />,
+      roles: ["ADMIN", "PROFESSOR", "STAFF"], // Accessible à tous
+      icon: <ChartBarIcon className="size-6" />,
       label: <span className="font-semibold">Dashboard</span>,
-      link: HOME,
+      link: DASHBOARD,
     },
     {
-      isSupperCollab: false,
+      roles: ["ADMIN", "PROFESSOR", "STAFF"], // Accessible à tous
+      icon: <HomeIcon className="size-6" />,
+      label: <span className="font-semibold">Tickets</span>,
+      link: TICKET,
+    },
+    {
+      roles: ["ADMIN", "PROFESSOR", "STAFF"], // Accessible à tous
       icon: <PlusCircleIcon className="size-6" />,
       label: <span className="font-semibold">Add Ticket</span>,
       link: ADDTICKET,
     },
+    {
+      roles: ["ADMIN"], // Uniquement Admin
+      icon: <CalendarIcon className="size-6" />,
+      label: <span className="font-semibold">Exam Periods</span>,
+      link: EXAM_PERIODS,
+    },
+    {
+      roles: ["ADMIN", "STAFF"], // Admin et Personnel
+      icon: <BuildingOfficeIcon className="size-6" />,
+      label: <span className="font-semibold">Room Reservations</span>,
+      link: ROOM_RESERVATIONS,
+    },
+    {
+      roles: ["ADMIN"], // Uniquement Admin
+      icon: <UserGroupIcon className="size-6" />,
+      label: <span className="font-semibold">Users Management</span>,
+      link: USER_MANAGEMENT,
+    },
   ];
+
+  // Filter navigation based on user role
+  const filteredNavigation = navigation.filter((item) => 
+    user && item.roles.includes(user.role)
+  );
 
   return (
     <React.Fragment>
@@ -48,9 +79,7 @@ export default function SideBar({ openaside, setOpenaside }) {
           </h1>
 
           <ul className="space-y-2 tracking-wide mt-8">
-            {navigation?.map(({ icon, label, link }, index) => {
-              // if (isSupperCollab && !SUPPER_COLLABORATOR_TITLES.includes(user.title))
-              //return null;
+            {filteredNavigation?.map(({ icon, label, link }, index) => {
               return (
                 <li key={index}>
                   <Link

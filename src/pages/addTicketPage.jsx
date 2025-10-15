@@ -1,16 +1,58 @@
 import React, { useState } from "react";
-import { PlusCircleIcon } from "@heroicons/react/16/solid";
+import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import useTypeOptions from "../store/utils";
+import { ticketsAPI } from "../api/api";
+import { HOME } from "../routes";
 
 export default function AddTicketPage() {
   const [title, setTitle] = useState("");
   const [fileType, setFileType] = useState("");
   const [totalNumber, setTotalNumber] = useState(0);
   const [description, setDescription] = useState("");
+  const [actProf, setActProf] = useState("");
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { typeOptions } = useTypeOptions();
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!title || !fileType || !totalNumber || totalNumber <= 0) {
+      setError("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const ticketData = {
+        title,
+        fileType,
+        description: description || "",
+        actProf: actProf || "",
+        totalNumber: parseInt(totalNumber),
+      };
+
+      const result = await ticketsAPI.create(ticketData, file);
+
+      if (result.success) {
+        alert("Ticket créé avec succès!");
+        navigate(HOME);
+      } else {
+        setError(result.message || "Erreur lors de la création du ticket");
+      }
+    } catch (err) {
+      setError("Erreur lors de la création du ticket");
+      console.error("Error creating ticket:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -22,6 +64,12 @@ export default function AddTicketPage() {
       </div>
 
       <div className="rounded-lg bg-white p-8 shadow-lg lg:col-span-3 lg:p-12 mx-auto">
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             <div>
@@ -51,6 +99,7 @@ export default function AddTicketPage() {
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="file"
                 type="file"
+                onChange={(e) => setFile(e.target.files[0])}
               />
             </div>
 
@@ -66,9 +115,9 @@ export default function AddTicketPage() {
                 rows={5}
                 id="fileType"
                 type="text"
-                defaultValue={fileType}
-                onChange={(e) => {
-                  setFileType(e.target.value);
+                value={fileType}
+                onChange={(selectedOption) => {
+                  setFileType(selectedOption?.value || "");
                 }}
                 options={typeOptions}
               />
@@ -117,9 +166,10 @@ export default function AddTicketPage() {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="inline-block w-full rounded-lg bg-indigo-500 px-5 py-3 font-medium text-white max-w-xs"
+              disabled={loading}
+              className="inline-block w-full rounded-lg bg-indigo-500 px-5 py-3 font-medium text-white max-w-xs disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-indigo-600"
             >
-              Create
+              {loading ? "Création..." : "Create"}
             </button>
           </div>
         </form>
